@@ -101,6 +101,34 @@ function cmp(a, b) {
 var values = [];
 var results = [];
 
+function fillOutCanonical(result, container) {
+  var length;
+
+  if (container instanceof Date) {
+    return result;
+  }
+
+  if (isArray(container)) {
+    length = container.length;
+
+    for (var i = 0; i < length; ++i) {
+      result.push(canonical(container[i]));
+    }
+
+    return result;
+  }
+
+  var keys = Object.keys(container);
+  length = keys.length;
+
+  for (var i = 0; i < length; ++i) {
+    var k = keys[i];
+    result[k] = canonical(container[k]);
+  }
+
+  return result;
+}
+
 function canonical(value) {
   if (value == null) return value;
   if (typeof value !== "object") return value;
@@ -110,10 +138,21 @@ function canonical(value) {
     return results[idx];
   }
 
-  values.splice(idx, 0, value);
-  results.splice(idx, 0, value);
+  var result;
+  if (value instanceof Date) {
+    result = value;
+  } else if (isArray(value)) {
+    result = [];
+  } else {
+    result = {};
+  }
 
-  return value;
+  values.splice(idx, 0, result);
+  results.splice(idx, 0, result);
+
+  fillOutCanonical(result, value);
+
+  return result;
 }
 
 canonical.values = values;

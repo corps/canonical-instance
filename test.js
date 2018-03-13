@@ -113,28 +113,49 @@ push(new Date(4817));
 newHead(new Date(2217));
 push(new Date(2217));
 
-var mixtTestables = testables.slice();
-shuffleArray(mixtTestables);
+function checkElementsAreCanonical(obj) {
+  if (obj == null || obj instanceof Date || typeof obj !== "object") return;
 
-mixtTestables.forEach(function(row) {
-  row.forEach(function(v) {
-    assert.deepEqual(v, row[0]);
-    assert.equal(cmp(v, row[0]), 0, JSON.stringify(v) + " " + JSON.stringify(row[0]));
+  var c = canonical(obj);
+
+  Object.keys(obj || 0).forEach(function(k) {
+    if (c[k] !== canonical(obj[k])) {
+      throw new Error(k + " of " + JSON.stringify(obj) + " does not hold canonical invariant!");
+    }
+
+    checkElementsAreCanonical(obj[k]);
   });
-});
-
-mixtTestables.forEach(function(row) {
-  assert.equal(cmp(row[0], row[0]), 0);
-  assert.equal(canonical(row[0]), row[0]);
-});
+}
 
 for (var i = 0; i < 10000; ++i) {
+  canonical.values.length = 0;
+  canonical.results.length = 0;
+
+  var mixtTestables = testables.slice();
+  shuffleArray(mixtTestables);
+
+  mixtTestables.forEach(function(row) {
+    row.forEach(function(v) {
+      assert.deepEqual(v, row[0]);
+      assert.equal(cmp(v, row[0]), 0);
+    });
+  });
+
+  var canonicals = {};
+  mixtTestables.forEach(function(row) {
+    var c = canonicals[testables.indexOf(row)] = canonical(row[0]);
+    assert.deepEqual(c, row[0]);
+  });
+
   shuffleArray(allValues).forEach(function(v) {
     var rowIdx = v[0];
     var colIdx = v[1];
 
     v = v[2];
 
-    assert.equal(canonical(v), testables[rowIdx][0])
+    assert.deepEqual(canonical(v), testables[rowIdx][0])
+    assert.equal(canonical(v), canonicals[rowIdx])
+
+    checkElementsAreCanonical(v);
   });
 }
