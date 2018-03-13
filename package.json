@@ -1,0 +1,23 @@
+{
+  "name": "canonical-instance",
+  "version": "1.0.0",
+  "description": "Returns a canonical instance for extensionally equal values.  No need for deepEquals!",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corps/canonical-instance.git"
+  },
+  "keywords": [
+    "deepEquals",
+    "immutable"
+  ],
+  "author": "Zach Collins <recursive.cookie.jar@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/corps/canonical-instance/issues"
+  },
+  "homepage": "https://github.com/corps/canonical-instance#readme"
+}
